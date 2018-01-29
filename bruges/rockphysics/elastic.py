@@ -57,7 +57,9 @@ def elastic_impedance(vp, vs, rho, theta1,
 
     ei = alpha**a * beta**b * rho**c
 
-    if normalize:
+    if not normalize:
+        alpha_0, beta_0, rho_0 = 1,1,1
+    else:
         if constants is None:
             # Use the means; this will return acoustic impedance for scalars.
             alpha_0 = np.nanmean(vp)
@@ -68,7 +70,20 @@ def elastic_impedance(vp, vs, rho, theta1,
                 alpha_0, beta_0, rho_0 = constants
             except ValueError as e:
                 raise ValueError("You must provide a sequence of 3 constants.")
-        ei *= alpha_0**(1 - a) * beta_0**(-b) * rho_0**(1 - c)
+    ei *= alpha_0**(1 - a) * beta_0**(-b) * rho_0**(1 - c)
+
+    # if normalize:
+    #     if constants is None:
+    #         # Use the means; this will return acoustic impedance for scalars.
+    #         alpha_0 = np.nanmean(vp)
+    #         beta_0 = np.nanmean(vs)
+    #         rho_0 = np.nanmean(rho)
+    #     else:
+    #         try:
+    #             alpha_0, beta_0, rho_0 = constants
+    #         except ValueError as e:
+    #             raise ValueError("You must provide a sequence of 3 constants.")
+    #     ei *= alpha_0**(1 - a) * beta_0**(-b) * rho_0**(1 - c)
 
     if rho_term:
         ei /= alpha
